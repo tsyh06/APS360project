@@ -4,7 +4,9 @@ from skimage.morphology import thin
 import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
 
-
+# Title: inkml2img
+# Author: "RobinXL"
+# Source: https://github.com/RobinXL/inkml2img
 def get_traces_data(inkml_file_abs_path, xmlns='{http://www.w3.org/2003/InkML}'):
 
     traces_data = []

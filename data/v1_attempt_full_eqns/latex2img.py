@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 from io import StringIO
 
+# Title: inkml2img
+# Author: "RobinXL"
+# Source: https://github.com/RobinXL/inkml2img
 def latex2img(formula, fontsize=12, dpi=300, format_='svg'):
     """Renders LaTeX formula into image.
     """
