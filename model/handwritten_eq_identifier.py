@@ -244,23 +244,6 @@ def show_segments(segments):
       plt.yticks([])
       i += 1
 
-# testing on single image
-
-path = os.getcwd()+"/test3.png"
-img,thresh = load_image(path)
-contours, hierarchy=cv2.findContours(thresh,cv2.RETR_EXTERNAL ,cv2.CHAIN_APPROX_SIMPLE ) 
-start_x, info = contour_info(thresh,contours)
-crop = find_seg(start_x, info)
-segments = crop_seg(crop, img, thresh,contours)
-result = get_result(crop,segments)
-print(result)
-
-# cv2.imshow is not support by google colab
-from google.colab.patches import cv2_imshow
-cv2_imshow(img)
-
-show_segments(segments)
-
 !unzip v1_final_data_eqns_square
 
 eqns = pd.read_excel(os.getcwd()+"/ground_truth_eqns.xlsx") 
@@ -269,7 +252,7 @@ ground_true = eqns['labels'].tolist()
 
 wrong,total = 0,0
 for name,label in zip(filename,ground_true):
-      path = os.getcwd()+"/ground_truth_eqns/"+name
+      path = os.getcwd()+"/v1_final_data_eqns_square/"+name
 
       if not isfile(path):
         continue
