@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  main {
+    width: 800px;
+    border: 1px solid #e0e0e0;
+    margin: 0 auto;
+    display: flex;
+    flex-grow: 1;
+  }
+
+  .left-block {
+    width: 160px;
+    border-right: 1px solid #e0e0e0;
+  }
+
+  .colors {
+    background-color: #ece8e8;
+    text-align: center;
+    padding-bottom: 5px;
+    padding-top: 10px;
+  }
+
+  .colors button {
+    display: inline-block;
+    border: 1px solid #00000026;
+    border-radius: 0;
+    outline: none;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 5px
+  }
+
+  .colors button:nth-of-type(1) {
+    background-color: #0000ff;
+  }
+
+  .colors button:nth-of-type(2) {
+    background-color: #009fff;
+  }
+
+  .colors button:nth-of-type(3) {
+    background-color: #0fffff;
+  }
+
+  .colors button:nth-of-type(4) {
+    background-color: #bfffff;
+  }
+
+  .colors button:nth-of-type(5) {
+    background-color: #000000;
+  }
+
+  .colors button:nth-of-type(6) {
+    background-color: #333333;
+  }
+
+  .colors button:nth-of-type(7) {
+    background-color: #666666;
+  }
+
+  .colors button:nth-of-type(8) {
+    background-color: #999999;
+  }
+
+  .colors button:nth-of-type(9) {
+    background-color: #ffcc66;
+  }
+
+  .colors button:nth-of-type(10) {
+    background-color: #ffcc00;
+  }
+
+  .colors button:nth-of-type(11) {
+    background-color: #ffff00;
+  }
+
+  .colors button:nth-of-type(12) {
+    background-color: #ffff99;
+  }
+
+  .colors button:nth-of-type(13) {
+    background-color: #003300;
+  }
+
+  .colors button:nth-of-type(14) {
+    background-color: #555000;
+  }
+
+  .colors button:nth-of-type(15) {
+    background-color: #00ff00;
+  }
+
+  .colors button:nth-of-type(16) {
+    background-color: #99ff99;
+  }
+
+  .colors button:nth-of-type(17) {
+    background-color: #f00000;
+  }
+
+  .colors button:nth-of-type(18) {
+    background-color: #ff6600;
+  }
+
+  .colors button:nth-of-type(19) {
+    background-color: #ff9933;
+  }
+
+  .colors button:nth-of-type(20) {
+    background-color: #f5deb3;
+  }
+
+  .colors button:nth-of-type(21) {
+    background-color: #330000;
+  }
+
+  .colors button:nth-of-type(22) {
+    background-color: #663300;
+  }
+
+  .colors button:nth-of-type(23) {
+    background-color: #cc6600;
+  }
+
+  .colors button:nth-of-type(24) {
+    background-color: #deb887;
+  }
+
+  .colors button:nth-of-type(25) {
+    background-color: #aa0fff;
+  }
+
+  .colors button:nth-of-type(26) {
+    background-color: #cc66cc;
+  }
+
+  .colors button:nth-of-type(27) {
+    background-color: #ff66ff;
+  }
+
+  .colors button:nth-of-type(28) {
+    background-color: #ff99ff;
+  }
+
+  .colors button:nth-of-type(29) {
+    background-color: #e8c4e8;
+  }
+
+  .colors button:nth-of-type(30) {
+    background-color: #ffffff;
+  }
+
+  .brushes {
+    /* background-color: purple;*/
+    padding-top: 5px
+  }
+
+  .brushes button {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background-color: #ece8e8;
+    margin-bottom: 5px;
+    padding: 5px;
+    height: 30px;
+    outline: none;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .brushes button:after {
+    height: 1px;
+    display: block;
+    background: #808080;
+    content: '';
+  }
+
+  .brushes button:nth-of-type(1):after {
+    height: 1px;
+  }
+
+  .brushes button:nth-of-type(2):after {
+    height: 2px;
+  }
+
+  .brushes button:nth-of-type(3):after {
+    height: 3px;
+  }
+
+  .brushes button:nth-of-type(4):after {
+    height: 4px;
+  }
+
+  .brushes button:nth-of-type(5):after {
+    height: 5px;
+  }
+
+  .buttons {
+    height: 80px;
+    padding-top: 10px;
+  }
+
+  .buttons button {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background-color: #ece8e8;
+    margin-bottom: 5px;
+    padding: 5px;
+    height: 30px;
+    outline: none;
+    position: relative;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .right-block {
+    width: 640px;
+  }
+
+  #paint-canvas {
+    cursor: crosshair;
+    border: 1px solid black;
+  }
+
+  #header-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+</style>
+
+<head>
+  <title>FlaskApp</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md"></div>
+      <div class="col-md-9">
+        <div id="header-text">
+          <h1>Math Expressions to LaTeX</h1>
+          <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="btnradio" id="btnradioclassify" autocomplete="off" checked="">
+            <label class="btn btn-outline-primary" for="btnradio1">Classify</label>
+            <input type="radio" class="btn-check" name="btnradio" id="btnradioabout" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btnradio2">About</label>
+            <input type="radio" class="btn-check" name="btnradio" id="btnradiosymbols" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btnradio3">Symbols</label>
+          </div>
+        </div>
+        <div class="section-classify">
+          <h3>Instructions: Draw a math expression and click "convert" for instant LaTeX conversion.</h3>
+          <!-- <h1><small class="text-muted">Digital Image Recognition of Handwritten Mathematical Expressions</small></h1>-->
+          <div class="left-block">
+
+          </div>
+          <div class="row">
+            <div class="col-md">
+              <div class="right-block">
+                <canvas id="paint-canvas" width="640" height="640"></canvas>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="buttons">
+                <button id="clear" type="button">Clear</button>
+                <button id="save" type="button">Convert</button>
+                <!-- <button id="grid" type="button">Grid</button>-->
+              </div>
+            </div>
+          </div>
+          <h3>LaTeX</h3>
+          <h3>How to Use</h3>
+          <h3>What does this app do?</h3>
+        </div>
+
+
+
+        <div class="section-about">
+          <h3>Thanks for using this app!</h3>
+          <h4>We are a group of undergraduate engineering students at the University of Toronto. This web app was
+            produced
+            as a part of the <a href="https://engineering.calendar.utoronto.ca/course/aps360h1" target="_blank">APS360:
+              Applied Fundamentals of Deep Learning</a> class in Summer 2022.</h4>
+
+        </div>
+
+        <div class="section-symbols">
+          <h3>Symbols we can classify & Math Types Limitations</h3>
+          <h5>Symbols - check with Muhammad's list</h5>
+          <h5>Math types - no vertical fractions.</h5>
+        </div>
+        <div class="col-md">
+          <!-- <img src="./MaeeshaBiswas.png"> -->
+        </div>
+      </div>
+      <div class="col-md"></div>
+    </div>
+  </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+<script>
+  window.onload = function () {
+
+    // Definitions
+    var canvas = document.getElementById("paint-canvas");
+    var context = canvas.getContext("2d");
+    var boundings = canvas.getBoundingClientRect();
+
+    // Specifications
+    var mouseX = 0;
+    var mouseY = 0;
+    context.strokeStyle = 'black'; // initial brush color
+    context.lineWidth = 2; // initial brush width
+    var isDrawing = false;
+
+    // Mouse Down Event
+    canvas.addEventListener('mousedown', function (event) {
+      setMouseCoordinates(event);
+      isDrawing = true;
+
+      // Start Drawing
+      context.beginPath();
+      context.moveTo(mouseX, mouseY);
+    });
+
+    // Mouse Move Event
+    canvas.addEventListener('mousemove', function (event) {
+      setMouseCoordinates(event);
+
+      if (isDrawing) {
+        context.lineTo(mouseX, mouseY);
+        context.stroke();
+      }
+    });
+
+    // Mouse Up Event
+    canvas.addEventListener('mouseup', function (event) {
+      setMouseCoordinates(event);
+      isDrawing = false;
+    });
+
+    // Handle Mouse Coordinates
+    function setMouseCoordinates(event) {
+      mouseX = event.clientX - boundings.left;
+      mouseY = event.clientY - boundings.top;
+    }
+
+    // Handle Clear Button
+    var clearButton = document.getElementById('clear');
+
+    clearButton.addEventListener('click', function () {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    /* Handle Grid Button
+    var clearButton = document.getElementById('grid');
+  
+    clearButton.addEventListener('click', function() {
+      w = context.canvas.width
+      h = context.canvas.height
+      for (x=0;x<=w;x+=40) {
+          for (y=0;y<=h;y+=40) {
+              context.moveTo(x, 0);
+              context.lineTo(x, h);
+              context.stroke();
+              context.strokeStyle = "WhiteSmoke";
+              context.moveTo(0, y);
+              context.lineTo(w, y);
+              context.stroke();
+          }
+      }
+    });
+  */
+
+    // Handle Convert Button. Currently downloads file locally.
+    var convertButton = document.getElementById('convert');
+
+    convertButton.addEventListener('click', function () {
+      var imageName = prompt('Please enter image name');
+      var canvasDataURL = canvas.toDataURL();
+      var a = document.createElement('a');
+      a.href = canvasDataURL;
+      a.download = imageName || 'drawing';
+      a.click();
+    });
+
+    var symbolsSectionBtn = document.getElementById('btnradiosymbols');
+    var aboutSectionBtn = document.getElementById('btnradioabout');
+    var classifySectionBtn = document.getElementById('btnradioclassify');
+
+    symbolsSectionBtn.addEventListener('click', function () {
+      console.log("symbolsSectionBtn clicked")
+    });
+
+    aboutSectionBtn.addEventListener('click', function () {
+      console.log("aboutSectionBtn clicked")
+    });
+
+    classifySectionBtn.addEventListener('click', function () {
+      console.log("classifySectionBtn clicked")
+    });
+  };
+
+
+
+</script>
+
+</html>
