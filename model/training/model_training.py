@@ -1,11 +1,5 @@
-import os
-import numpy as np
-import torch
 import time
-import torchvision
-from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
-import torchvision.models as models
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
