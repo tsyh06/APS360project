@@ -234,31 +234,13 @@ def show_segments(segments):
       plt.xticks([])
       plt.yticks([])
       i += 1
-
-!unzip v1_final_data_eqns_square
-
-eqns = pd.read_excel(os.getcwd()+"/ground_truth_eqns.xlsx") 
-filename = eqns['filenames'].tolist()
-ground_true = eqns['labels'].tolist()
-
-wrong,total = 0,0
-for name,label in zip(filename,ground_true):
-      path = os.getcwd()+"/v1_final_data_eqns_square/"+name
-
-      if not isfile(path):
-        continue
-
-      img,thresh = load_image(path)
-      contours, hierarchy=cv2.findContours(thresh,cv2.RETR_EXTERNAL ,cv2.CHAIN_APPROX_SIMPLE ) 
-      start_x, info = contour_info(thresh,contours)
-      crop = find_seg(start_x, info)
-      segments = crop_seg(crop, img, thresh,contours)
-      result = get_result(crop,segments)
-
-      if(result!=label.replace(" ", "").casefold()):
-        print("\nresult:",result,"\nlabel: ",label)
-        print('diff # ',sum(x!=y for x,y in zip(result,label)))
-        wrong += 1
-      total += 1
-
-print('\naccuracy: ', (total-wrong)/total)
+################################################
+path = os.getcwd()+'/unknown.png'
+img,thresh = load_image(path)  
+cv2_imshow(img)
+contours, hierarchy=cv2.findContours(thresh,cv2.RETR_EXTERNAL ,cv2.CHAIN_APPROX_SIMPLE ) 
+start_x, info = contour_info(thresh,contours)
+crop = find_seg(start_x, info)
+segments = crop_seg(crop, img, thresh,contours)
+result = get_result(crop,segments)
+print(result)
