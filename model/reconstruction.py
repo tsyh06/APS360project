@@ -75,8 +75,8 @@ def find_seg(start_x, info):
         for j in range(i + 1, len(start_x)):
 
             # check if start at almost same x position and if width is similar
-            if ((start_x[j] - start_x[i]) < info[i][1] / 2.5):
-                if (abs(info[i][1] - info[j][1]) < (max(info[i][1], info[j][1]) / 3)):
+            if ((start_x[j] - start_x[i]) <= info[i][1] / 2):
+                if (abs(info[i][1] - info[j][1]) < (max(info[i][1], info[j][1]) / 2.5)):
                 
                     crop[crop_idx][1] = max(crop[crop_idx][1] + crop[crop_idx][0], info[j][1] + start_x[j]) - crop[crop_idx][0]
                     if (crop[crop_idx][2] < info[j][2]):
@@ -118,13 +118,21 @@ def crop_seg(crop, img, thresh, contours):
         white_img = cv2.bitwise_not(white_img)
     
         symbol = white_img[seg[2]:seg[2] + seg[3], seg[0]:seg[0] + seg[1]]
-    
+
+        # pad current segment
+        pad = int(max(seg[3],seg[1]) / 3)
+        white_ver = np.full((pad, seg[1]), 255, dtype='uint8')
+        white_hor = np.full((seg[3]+2*pad, pad), 255, dtype='uint8')
+        symbol = np.r_[white_ver, symbol, white_ver]
+        symbol = np.c_[white_hor, symbol, white_hor]
+        
+
         # pad current segment if is too thin 
-        if (seg[3] < seg[1] / 2.5):
-            white = np.full((int((seg[1] - seg[3]) / 2), seg[1]), 255, dtype='uint8')
+        if (symbol.shape[0] < symbol.shape[1] / 2.5):
+            white = np.full((int((seg[1] - symbol.shape[0]) / 2), symbol.shape[1]), 255, dtype='uint8')
             symbol = np.vstack([white, symbol, white])
-        elif (seg[1] < seg[3] / 2.5):
-            white = np.full((seg[3], int((seg[3] - seg[1]) / 2)), 255, dtype='uint8')
+        elif (symbol.shape[1] < symbol.shape[0] / 2.5):
+            white = np.full((symbol.shape[0], int((symbol.shape[0] - symbol.shape[1]) / 2)), 255, dtype='uint8')
             symbol = np.c_[white, symbol, white]
     
         segments.append(symbol)
@@ -141,11 +149,11 @@ def get_result(crop, segments):
         result: a string that represent the equation in LaTex
     """
     result = ""
-    exp = False # if currently is exponent 
+    exp = 0 # if currently is exponent 
     exp_end  = False
-    sqrt = False # if currently in squart root
-    sqrt_end = 0
-    bottom = False # if currently in lower part
+    sqrt = 0 # if currently in squart root
+    sqrt_end = []
+    bottom = 0 # if currently in lower part
     bottom_end = False
 
     for i in range(len(segments)):
@@ -160,22 +168,37 @@ def get_result(crop, segments):
       pred = labels_map[model(current_seg).max(1, keepdim=True)[1]]
 
       if (i > 0 and not bottom_end
-          and (crop[i][2] + crop[i][3] < crop[i - 1][2] + crop[i - 1][3] * 1 / 3)):
+          and (crop[i][2] + crop[i][3] < crop[i - 1][2] + crop[i - 1][3] * 0.5)):
         result += '^{'
-        exp = True
+        exp += 1
       
       if (i > 0 and not exp_end
-          and (crop[i][2]  > crop[i - 1][2] + crop[i - 1][3] * 2 / 3)):
+          and (crop[i][2]  > crop[i - 1][2] + crop[i - 1][3] * 0.5)):
         result += '_{'
-        bottom = True
+        bottom += 1
 
       result += pred
 
       if(pred=='\sqrt{'):
-        sqrt_end = crop[i][0] + crop[i][1]
-        sqrt = True
+        sqrt_end.append(crop[i][0] + crop[i][1])
+        sqrt += 1
         if( i>0 and crop[i - 1][0] + crop[i - 1][1]>crop[i][0]):
           result = result[0:len(result)-7]+'\sqrt['+result[len(result)-7]+']{'
+
+      elif(pred == 'n'):
+        if(result[len(result)-2:]=='si'):
+          result = result[:len(result)-2]+"\sin"
+        elif(result[len(result)-2:]=='ta'):
+          result = result[:len(result)-2]+"\tan"
+      elif(pred == 's'):
+        if(result[len(result)-2:]=='co'):
+          result = result[:len(result)-2]+"\cos"
+
+      elif(pred == 'g'):
+        if(result[len(result)-2:]=='lo'):
+          print(result)
+          result = result[:len(result)-2]+"\log"
+
 
       exp_end = False
       bottom_end = False
@@ -184,18 +207,31 @@ def get_result(crop, segments):
         exp = False
         exp_end = True
       
-      if (bottom and (i + 1 == len(segments) or crop[i][2]> crop[i + 1][2] + crop[i + 1][3] * 2 / 3)):
-        result += '}'
-        bottom = False
-        bottom_end = True
+      if (bottom):
+        if (i + 1 == len(segments)):
+          for num in range(bottom):
+            result += '}'
+        elif (crop[i][2]> crop[i + 1][2] + crop[i + 1][3] * 0.5):
+          result += '}'
+          bottom -= 1
+          bottom_end = True
       
-      if (exp and (i + 1 == len(segments) or crop[i][2] + crop[i][3] < crop[i + 1][2] + crop[i + 1][3] * 1 / 3)):
-        result += '}'
-        exp = False
-        exp_end = True
+      if (exp):
+        if (i + 1 == len(segments)):
+          for num in range(exp):
+            result += '}'
+        elif (crop[i][2] + crop[i][3] < crop[i + 1][2] + crop[i + 1][3] * 0.5):
+          result += '}'
+          exp -= 1
+          exp_end = True
 
-      if(sqrt and (i+1 ==len(segments) or crop[i+1][0]>=sqrt_end )):
-        result+='}'
+      if(sqrt):
+        if (i + 1 == len(segments)):
+          for num in range(sqrt):
+            result += '}'
+        elif (crop[i+1][0]>=sqrt_end[sqrt-1]):
+          sqrt -= 1
+          result+='}'
       
 
     return result
