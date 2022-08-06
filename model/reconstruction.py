@@ -117,21 +117,13 @@ def crop_seg(crop, img, thresh, contours):
     
         white_img = cv2.bitwise_not(white_img)
     
-        symbol = white_img[seg[2]:seg[2] + seg[3], seg[0]:seg[0] + seg[1]]
-
-        # pad current segment
-        pad = int(max(seg[3],seg[1]) / 3)
-        white_ver = np.full((pad, seg[1]), 255, dtype='uint8')
-        white_hor = np.full((seg[3]+2*pad, pad), 255, dtype='uint8')
-        symbol = np.r_[white_ver, symbol, white_ver]
-        symbol = np.c_[white_hor, symbol, white_hor]
-        
+        symbol = white_img[seg[2]:seg[2] + seg[3], seg[0]:seg[0] + seg[1]]        
 
         # pad current segment if is too thin 
         if (symbol.shape[0] < symbol.shape[1] / 2.5):
             white = np.full((int((seg[1] - symbol.shape[0]) / 2), symbol.shape[1]), 255, dtype='uint8')
             symbol = np.vstack([white, symbol, white])
-        elif (symbol.shape[1] < symbol.shape[0] / 2.5):
+        elif (symbol.shape[1] < symbol.shape[0] / 2):
             white = np.full((symbol.shape[0], int((symbol.shape[0] - symbol.shape[1]) / 2)), 255, dtype='uint8')
             symbol = np.c_[white, symbol, white]
     
