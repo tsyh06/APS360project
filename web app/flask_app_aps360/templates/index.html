@@ -5,6 +5,23 @@
     box-sizing: border-box;
   }
 
+  /* width */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: darkgrey;
+    border-radius: 10px;
+  }
+
   main {
     width: 800px;
     border: 1px solid #e0e0e0;
@@ -232,18 +249,27 @@
   }
 
   #header-text {
+    padding: 48px 0px 24px 0px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    flex-direction: column;
+  }
+
+  .section-hide {
+    display: none;
+  }
+
+
+  .section-show {
+    display: block;
   }
 </style>
 
 <head>
-  <title>FlaskApp</title>
+  <title>Math Expression Classifier</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.2.0/sandstone/bootstrap.min.css">
 </head>
 
 <body>
@@ -254,12 +280,9 @@
         <div id="header-text">
           <h1>Math Expressions to LaTeX</h1>
           <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-            <input type="radio" class="btn-check" name="btnradio" id="btnradioclassify" autocomplete="off" checked="">
-            <label class="btn btn-outline-primary" for="btnradio1">Classify</label>
-            <input type="radio" class="btn-check" name="btnradio" id="btnradioabout" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnradio2">About</label>
-            <input type="radio" class="btn-check" name="btnradio" id="btnradiosymbols" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnradio3">Symbols</label>
+            <button type="button" class="btn btn-primary" id="btnradioclassify">Classify</button>
+            <button type="button" class="btn btn-info" id="btnradiosymbol">Symbols</button>
+            <button type="button" class="btn btn-dark" id="btnradioabout">About</button>
           </div>
         </div>
         <div class="section-classify">
@@ -271,37 +294,382 @@
           <div class="row">
             <div class="col-md">
               <div class="right-block">
-                <canvas id="paint-canvas" width="640" height="640"></canvas>
+                <input type="file" id="input"><br>
+                <img id="output">
+                <canvas id="paint-canvas" style="display:none"></canvas>
               </div>
             </div>
             <div class="col-md">
               <div class="buttons">
-                <button id="clear" type="button">Clear</button>
-                <button id="save" type="button">Convert</button>
+                <!-- <button id="clear" type="button">Clear</button> --> 
+                <button id="convert-btn" type="button">Convert</button>
                 <!-- <button id="grid" type="button">Grid</button>-->
               </div>
             </div>
           </div>
           <h3>LaTeX</h3>
-          <h3>How to Use</h3>
-          <h3>What does this app do?</h3>
+          <h4 class="latex-predict-1 section-hide"> {{ prediction }} </h4>
+          <br>
         </div>
 
 
 
-        <div class="section-about">
+        <div class="section-about section-hide">
           <h3>Thanks for using this app!</h3>
-          <h4>We are a group of undergraduate engineering students at the University of Toronto. This web app was
+          <h4 class="py-2">We are a group of undergraduate engineering students at the University of Toronto. This web
+            app was
             produced
             as a part of the <a href="https://engineering.calendar.utoronto.ca/course/aps360h1" target="_blank">APS360:
               Applied Fundamentals of Deep Learning</a> class in Summer 2022.</h4>
-
+          <div class="row">
+            <div class="col-sm">
+              <div class="card border-0 shadow">
+                <img src="{{url_for('static', filename='MaeeshaBiswas.jpg')}}" class="card-img-top"
+                  alt="Maeesha Biswas Photograph">
+                <div class="card-body text-center">
+                  <h5 class="card-title mb-0"><a href="https://maeeshabiswas.com/" target="_blank">Maeesha Biswas</a>
+                  </h5>
+                  <div class="card-text text-black-50">Industrial Engineering 2023</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm">
+              <div class="card border-0 shadow">
+                <img src="{{url_for('static', filename='TracySun.jpeg')}}" class="card-img-top"
+                  alt="Tracy Sun Photograph">
+                <div class="card-body text-center">
+                  <h5 class="card-title mb-0"><a
+                      href="https://www.linkedin.com/in/tracy-sun-8971bb225/?originalSubdomain=ca" target="_blank">Tracy
+                      Sun</a></h5>
+                  <div class="card-text text-black-50">Computer Engineering 2025</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm">
+              <div class="card border-0 shadow">
+                <img src="{{url_for('static', filename='MuhammadAhmed.jpg')}}" class="card-img-top"
+                  alt="Muhammad Ahmed Photograph">
+                <div class="card-body text-center">
+                  <h5 class="card-title mb-0"><a href="" target="_blank">Muhammad Ahmed</a></h5>
+                  <div class="card-text text-black-50">Computer Engineering 2025</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="section-symbols">
-          <h3>Symbols we can classify & Math Types Limitations</h3>
-          <h5>Symbols - check with Muhammad's list</h5>
-          <h5>Math types - no vertical fractions.</h5>
+        <div class="section-symbols section-hide">
+          <h3>Symbols we can classify</h3>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">LaTeX</th>
+                <th scope="col">Syntax</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-info">
+                <th scope="row">0</th>
+                <td>0</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">1</th>
+                <td>1</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">2</th>
+                <td>2</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">3</th>
+                <td>3</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">4</th>
+                <td>4</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">5</th>
+                <td>5</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">6</th>
+                <td>6</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">7</th>
+                <td>7</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">8</th>
+                <td>8</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">9</th>
+                <td>9</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">-</th>
+                <td>-</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">!</th>
+                <td>!</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">(</th>
+                <td>(</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">)</th>
+                <td>)</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">,</th>
+                <td>,</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\alpha</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">\beta</th>
+                <td>\beta</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">\Delta</th>
+                <td>\Delta</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">\gamma</th>
+                <td>\gamma</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">\lambda</th>
+                <td>\lambda</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">\mu</th>
+                <td>\mu</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">\phi</th>
+                <td>\phi</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row">\pi</th>
+                <td>\pi</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row">\sigma</th>
+                <td>\sigma</td>
+              </tr>
+
+              <tr class="table-default">
+                <th scope="row">\theta</th>
+                <td>\theta</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\forall</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\geq</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\gt</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\in</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\infty</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\int</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\leq</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\lim</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\log</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\lt</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\neq</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\pm</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\cos</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\sin</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\tan</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\sqrt</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>\sum</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>\times</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>{</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>}</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>+</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>=</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>A</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>b</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>C</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>d</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>div</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>e</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>f</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>G</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>H</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>i</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>j</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>k</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>l</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>M</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>N</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>o</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>p</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>q</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>R</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>S</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>T</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>u</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>v</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>w</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>X</td>
+              </tr>
+              <tr class="table-default">
+                <th scope="row"></th>
+                <td>y</td>
+              </tr>
+              <tr class="table-info">
+                <th scope="row"></th>
+                <td>z</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 class="py-2">Expression Limitations</h3>
+          <h5>This app only classifies equations that read left to right, and is not able to display the LaTeX for
+            equations that read vertically, such as vertical fractions.</h5>
         </div>
         <div class="col-md">
           <!-- <img src="./MaeeshaBiswas.png"> -->
@@ -333,8 +701,21 @@
     var mouseX = 0;
     var mouseY = 0;
     context.strokeStyle = 'black'; // initial brush color
-    context.lineWidth = 2; // initial brush width
+    context.lineWidth = 1; // initial brush width
     var isDrawing = false;
+
+
+    var symbolsSectionBtn = document.getElementById('btnradiosymbol');
+    var aboutSectionBtn = document.getElementById('btnradioabout');
+    var classifySectionBtn = document.getElementById('btnradioclassify');
+    const aboutSection = document.querySelectorAll('.section-about');
+    const symbolSection = document.querySelectorAll('.section-symbols');
+    const classifySection = document.querySelectorAll('.section-classify');
+
+    /*
+        document.getElementById("paint-canvas").addEventListener('click', () => {
+    
+    });
 
     // Mouse Down Event
     canvas.addEventListener('mousedown', function (event) {
@@ -367,13 +748,134 @@
       mouseX = event.clientX - boundings.left;
       mouseY = event.clientY - boundings.top;
     }
-
-    // Handle Clear Button
+*/
+    /* Handle Clear Button
     var clearButton = document.getElementById('clear');
 
     clearButton.addEventListener('click', function () {
       context.clearRect(0, 0, canvas.width, canvas.height);
     });
+*/
+    function uploadCanvas(dataURL) {
+      var blobBin = atob(dataURL.split(',')[1]);
+      var array = [];
+      for (var i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i));
+      }
+      var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
+      var formdata = new FormData();
+      formdata.append("image", file);
+
+      $.ajax({
+        url: "/asdfs/zlock",
+        type: "POST",
+        data: formdata,
+        processData: false, // important
+        contentType: false  // important
+      }).complete(function (response) {
+        console.log(response.status);
+      });
+    }
+
+
+    function uploadCanvas(dataURL) {
+    var blobBin = atob(dataURL.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i));
+    }
+    var file=new Blob([new Uint8Array(array)], {type: 'image/png'});
+    var formdata = new FormData();
+    formdata.append("image", file);
+    
+    $.ajax({
+       url: "/asdfs/zlock",
+       type: "POST",
+       data: formdata,
+       processData: false, // important
+       contentType: false  // important
+    }).complete(function(response){
+      console.log(response.status);
+    });
+  }
+  var input, output;
+
+  input = document.getElementById("input");
+  // canvas = document.getElementById("canvas");
+  // context = canvas.getContext('2d');
+  output = document.getElementById("output");
+
+  input.addEventListener("change", function() {
+    var reader = new FileReader();
+
+    reader.addEventListener("loadend", function(arg) {
+      var src_image = new Image();
+
+      src_image.onload = function() {
+        canvas.height = src_image.height;
+        canvas.width = src_image.width;
+        context.drawImage(src_image, 0, 0);
+        var imageData = canvas.toDataURL("image/png"); 
+        output.src = imageData;
+        uploadCanvas(imageData);
+      }
+
+      src_image.src = this.result;
+    });
+
+    reader.readAsDataURL(this.files[0]);
+  });
+
+    // Handle Convert Button. Currently downloads file locally.
+    var convertButton = document.getElementById('convert-btn');
+    // var ca = document.getElementById('convert');
+
+    const latexSection = document.querySelectorAll('.latex-predict-1');
+    var input, output;
+
+    convertButton.addEventListener('click', function () {
+    setImagePath = e => {
+        let reader = new FileReader() 
+        reader.readAsDataURL(e.target.files[0])
+        
+        
+        reader.onload = () => {      
+        this.setState({        
+          queryImage: reader.result      
+        },()=> this.postImage())    
+      }
+      }
+
+      postImage = () => { 
+      fetch("http://127.0.0.1:5000/api/predict", {                      
+        method: "POST",  
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(this.state.queryImage)
+      })
+      .then(res => res.json())
+      .then(data => {
+        // do stuff with data
+      }) 
+      }
+      // document.getElementsByClassName('latex-predict').removeClass('section-hide')
+      // latexSection.forEach(x => $(x).removeClass('section-hide'));
+
+
+      // input.addEventListener("change", function() {
+
+      //});
+      /*var imageName = prompt('Please enter image name');
+      var canvasDataURL = canvas.toDataURL();
+      var a = document.createElement('a');
+      a.href = canvasDataURL;
+      a.download = imageName || 'drawing';
+      a.click();aboutSection
+      var xhr = new XMLHttpRequest();
+*/
+      // Setup our listener to process compeleted requests
+      console.log("convert button clicked")
+    });
+
 
     /* Handle Grid Button
     var clearButton = document.getElementById('grid');
@@ -395,36 +897,24 @@
     });
   */
 
-    // Handle Convert Button. Currently downloads file locally.
-    var convertButton = document.getElementById('convert');
-
-    convertButton.addEventListener('click', function () {
-      var imageName = prompt('Please enter image name');
-      var canvasDataURL = canvas.toDataURL();
-      var a = document.createElement('a');
-      a.href = canvasDataURL;
-      a.download = imageName || 'drawing';
-      a.click();
-    });
-
-    var symbolsSectionBtn = document.getElementById('btnradiosymbols');
-    var aboutSectionBtn = document.getElementById('btnradioabout');
-    var classifySectionBtn = document.getElementById('btnradioclassify');
-
     symbolsSectionBtn.addEventListener('click', function () {
-      console.log("symbolsSectionBtn clicked")
+      symbolSection.forEach(x => $(x).removeClass('section-hide'));
+      classifySection.forEach(x => $(x).addClass('section-hide'));
+      aboutSection.forEach(x => $(x).addClass('section-hide'));
     });
 
     aboutSectionBtn.addEventListener('click', function () {
-      console.log("aboutSectionBtn clicked")
+      symbolSection.forEach(x => $(x).addClass('section-hide'));
+      classifySection.forEach(x => $(x).addClass('section-hide'));
+      aboutSection.forEach(x => $(x).removeClass('section-hide'));
     });
 
     classifySectionBtn.addEventListener('click', function () {
-      console.log("classifySectionBtn clicked")
+      symbolSection.forEach(x => $(x).addClass('section-hide'));
+      classifySection.forEach(x => $(x).removeClass('section-hide'));
+      aboutSection.forEach(x => $(x).addClass('section-hide'));
     });
   };
-
-
 
 </script>
 
