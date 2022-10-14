@@ -12,7 +12,7 @@ The classifier was train on individual symbols extracted from equations provided
 
 ## How to Install and Run the Project
 
-**Python version?**
+**Python version**
 
 **Steps**
 
