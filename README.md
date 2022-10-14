@@ -17,16 +17,13 @@ The classifier was train on individual symbols extracted from equations provided
 **Steps**
 
 ```bash
-git clone https://github.com/tsyh06/APS360project.git```
+git clone https://github.com/tsyh06/APS360project.git
 ```
 
 Install dependencies (`setup.py`)
 
-// todo: command
-
 Build & Run project so it's usable on a browser
 
-// screenshots add here
 
 ## Collaborators
 
