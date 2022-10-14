@@ -1,10 +1,12 @@
 # APS360 Group 10 Project: Digital Image Recognition of Handwritten Mathematical Expressions
 
-[TOC]
+This project contain a CNN based classifier and a web app. It can take an image of a handwritten equation as an input and convert it into LaTeX.
 
-// Add description here.
+The classifier was train on individual symbols extracted from equations provided by CROHME. The dataset consists of 74 classes including mathematical digits, alphabets, basic operators, trig functions, and some greek letters.
 
 ## Project Demo
+
+![webapp](https://user-images.githubusercontent.com/100390810/195740813-ac52e366-a70c-427a-8774-941782cab977.png)
 
 // include video demo here when done after final presentation
 
